@@ -3,8 +3,12 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
-        <title>Laravel</title>
+	
+	@hasSection('title')
+		<title>@yield('title') | {{ config('app.name') }}</title>
+	@else
+        	<title>{{ config('app.name') }}</title>
+	@endif
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
@@ -52,7 +56,7 @@
                 color: #636b6f;
                 padding: 0 25px;
                 font-size: 13px;
-                font-weight: 600;
+                font-weight: 540;
                 letter-spacing: .1rem;
                 text-decoration: none;
                 text-transform: uppercase;
@@ -70,10 +74,10 @@
                     @auth
                         <a href="{{ url('/home') }}">Home</a>
                     @else
-                        <a href="{{ route('login') }}">Login</a>
+                        <a href="{{ route('login') }}">{{__('Login')}}</a>
 
                         @if (Route::has('register'))
-                            <a href="{{ route('register') }}">Register</a>
+                            <a href="{{ route('register') }}">{{__('Register')}}</a>
                         @endif
                     @endauth
                 </div>
@@ -81,7 +85,7 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    Laravel
+		{{ config('app.name') }}
                 </div>
 
                 <div class="links">
