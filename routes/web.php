@@ -13,10 +13,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+// ダッシュボード
+Route::get('/', 'HomeController@index')->name('dash');
+
+// Users
+Route::get('users/{user}', 'UsersController@mypage')->name('users.maypage');
+Route::resource('users', 'UsersController', ['only' => ['edit', 'update']]);
+
+// Lessons
+Route::resource('lessons', 'LessonsController');
+Route::get('lessons/{lesson}/confirm', 'LessonsController@confirm')->name('lessons.confirm');
