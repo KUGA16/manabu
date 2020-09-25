@@ -15,11 +15,11 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 
-// ダッシュボード
-Route::get('/', 'HomeController@index')->name('dash');
+// Home
+Route::get('/', 'HomeController@index')->name('/');
 
 // Users
-Route::get('users/{user}', 'UsersController@mypage')->name('users.maypage');
+Route::get('users/{user}', 'UsersController@mypage')->name('users.mypage');
 Route::resource('users', 'UsersController', ['only' => ['edit', 'update']]);
 
 // Lessons
