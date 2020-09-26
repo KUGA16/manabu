@@ -23,8 +23,13 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
-    {
+    //ダッシュボード
+    public function index() {
         return view('home/dash');
+    }
+
+    //ログアウト画面
+    public function logout() {
+        return view('home/logout');
     }
 }
