@@ -18,4 +18,16 @@ class Lesson extends Model
         'date',
         'time'
     ];
+
+    public function user() {
+        return $this->belongsTo('App\User');
+    }
+
+    public function category() {
+        return $this->belongsTo('App\Category');
+    }
+
+    public function order_details() {
+        return $this->hasMany('App\OrderDetail');
+    }
 }
