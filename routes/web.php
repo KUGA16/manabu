@@ -26,3 +26,8 @@ Route::resource('users', 'UsersController', ['only' => ['edit', 'update']]);
 // Lessons
 Route::resource('lessons', 'LessonsController');
 Route::get('lessons/{lesson}/confirm', 'LessonsController@confirm')->name('lessons.confirm');
+
+//OrderDetails
+Route::group(['prefix' => 'users/{user}'], function() {
+  Route::resource('order_details', 'OrderDetailsController', ['only' => ['store', 'destroy']]);
+});
