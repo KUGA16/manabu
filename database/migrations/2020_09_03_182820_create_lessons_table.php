@@ -13,10 +13,15 @@ class CreateLessonsTable extends Migration
      */
     public function up()
     {
+        if (Schema::hasTable('lessons')) {
+            // テーブルが存在していればリターン
+            return;
+        }
+
         Schema::create('lessons', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('user_id')->unsigned();
-            $table->integer('category_id')->unsigned();
+            $table->id();
+            $table->bigInteger('user_id')->unsigned();
+            $table->bigInteger('category_id')->unsigned();
             $table->string('title');
             $table->text('body');
             $table->string('image');
