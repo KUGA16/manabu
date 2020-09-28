@@ -14,7 +14,7 @@ class ChangeUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->bigInteger('id')->change();
+            $table->bigIncrements('id')->change();
         });
     }
 
@@ -26,7 +26,8 @@ class ChangeUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->int('id')->change();
+            // $table->int('id')->change();
+            $table->bigInteger('id')->change();
         });
     }
 }
