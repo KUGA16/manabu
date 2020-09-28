@@ -73,6 +73,14 @@
       </div>
     </nav>
 
+    <!-- フラッシュメッセージ -->
+    @if (session('flash_message'))
+        <div class="alert alert-success" role="alert" onclick="this.classList.add('hidden')">
+            {{ session('flash_message') }}
+        </div>
+    @endif
+    <!-- フラッシュメッセージ -->
+
     <main class="py-4">
       @yield('content')
     </main>

@@ -26,7 +26,12 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/';
+
+    // protected $redirectTo = '/';
+    protected function redirectTo() {
+        session()->flash('flash_message', '正常にログインしました');
+        return '/';
+    }
 
     /**
      * Create a new controller instance.
