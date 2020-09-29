@@ -11,11 +11,6 @@ use Illuminate\Support\Facades\Auth;
 class UsersController extends Controller
 {
 
-  public function edit($id)
-  {
-    return view('users.edit', ['user' => Auth::user()->id]);
-  }
-
   public function mypage($id) {
     $user = User::find($id);
     $lessons = Lesson::where('user_id', $user->id)
@@ -28,4 +23,23 @@ class UsersController extends Controller
     return view('users.mypage', ['user' => $user, 'lessons' => $lessons, 'order_details' => $order_details]);
   }
 
+  public function edit($id) {
+    return view('users.edit', ['user' => Auth::user()]);
+  }
+
+  public function update(Request $request, $id) {
+
+    //バリデーション
+    $request->validate([
+      'name' => 'required|string|max:255', //入力必須、文字列、255文字以内
+      'email' => 'required|email:rfc',
+    ]);
+
+    $user = User::find($id);
+    $new_date = $request->all();
+    unset($request->all()['_token']);
+    $user->fill($new_date)->save();
+    return redirect()->route('users.mypage', ['user' => $user->id])
+        ->with('flash_message', '正常にプロフィール編集が完了しました。');
+  }
 }
