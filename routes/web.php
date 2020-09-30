@@ -20,7 +20,7 @@ Route::get('/', 'HomeController@index')->name('/');
 Route::get('logout', 'HomeController@logout')->name('logout');
 
 // Users
-Route::get('users/{user}', 'UsersController@mypage')->name('users.mypage');
+Route::get('users/{user}/mypage', 'UsersController@mypage')->name('users.mypage');
 Route::resource('users', 'UsersController', ['only' => ['edit', 'update']]);
 
 // Lessons
