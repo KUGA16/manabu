@@ -25,7 +25,8 @@
                         </form>
                         <form method="post" action="{{ route('lessons.destroy', [$lesson->id]) }}">
                             {{ csrf_field() }}
-                            <input type="submit" value="レッスンを削除" class="btn btn-link" onclick='return confirm("{{ $lesson->title }}を本当に削除しますか？");'>
+                            {{ Form::hidden('_method', 'delete') }}
+                            <input type="submit" value="レッスンを削除" class="btn btn-link" onclick='confirm("{{ $lesson->title }}を本当に削除しますか？")'>
                         </form>
                     @else
                         <!-- レッスン未購入か判断 -->

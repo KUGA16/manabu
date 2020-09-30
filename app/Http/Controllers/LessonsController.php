@@ -18,14 +18,15 @@ class LessonsController extends Controller
     //登録処理
     public function store(Request $request) {
         $request->validate([
-            'title' => 'required|string|max:255', //入力必須、文字列、255文字以内
+            'title'       => 'required|string|max:255', //入力必須、文字列、255文字以内
             'category_id' => 'required',
-            // 'image' => 'file|image', //アップロードに成功している、画像ファイル
-            'body'=>'required|string|max:2048',
-            'l_address' => 'required',
-            'm_address' => 'required',
-            'date' => 'required',
-            'time' => 'required',
+            // 'image'    => 'file|image', //アップロードに成功している、画像ファイル
+            'body'        => 'required|string|max:2048',
+            'keyword'     => 'max:255',
+            'l_address'   => 'required',
+            'm_address'   => 'required',
+            'date'        => 'required|date|after:today', //今日より後の日付のみ可
+            'time'        => 'required',
         ]);
 
             $lesson = new Lesson();
@@ -42,6 +43,8 @@ class LessonsController extends Controller
             $lesson->time = $request->time;
             //テーブルを保存
             $lesson->save();
+            //flag_edit関数を呼び出し
+            $this->teacher_flag_update(Auth::user());
             return redirect()->route('lessons.show', ['lesson' => $lesson->id])
             ->with('flash_message', '正常に投稿が完了しました。');
     }
@@ -53,7 +56,7 @@ class LessonsController extends Controller
 
     //詳細画面
     public function show($id) {
-        $lesson = Lesson::findOrFail($id);
+        $lesson = Lesson::find($id);
         //$lessonを契約済か判断（order_details内にレコードがあればture:契約済、なければfalse:未契約）
         $have_lesson = OrderDetail::where('user_id', Auth::user()->id)->where('lesson_id', $lesson->id)->exists();
         return view('lessons.show', ['lesson' => $lesson, 'have_lesson' => $have_lesson]);
@@ -61,23 +64,74 @@ class LessonsController extends Controller
 
     //編集画面
     public function edit($id) {
-        $lesson = Lesson::findOrFail($id);
+        $lesson = Lesson::find($id);
         return view('lessons.edit', ['lesson' => $lesson]);
     }
 
     //更新処理
-    public function update() {
+    public function update(Request $request, $id) {
+        //バリデーション
+        $request->validate([
+            'title'       => 'required|string|max:255', //入力必須、文字列、255文字以内
+            'category_id' => 'required',
+            // 'image'    => 'file|image', //アップロードに成功している、画像ファイル
+            'body'        => 'required|string|max:2048',
+            'keyword'     => 'max:255',
+            'l_address'   => 'required',
+            'm_address'   => 'required',
+            'date'        => 'required|date|after:today', //今日より後の日付のみ可
+            'time'        => 'required',
+        ]);
 
+        $lesson = Lesson::find($id);
+        $new_date = $request->all();
+        unset($request->all()['_token']); //トークン削除
+        $lesson->fill($new_date)->save();
+        return redirect()->route('lessons.show', ['lesson' => $id])
+        ->with('flash_message', '正常にレッスンの編集が完了しました。');
     }
 
     //契約確認画面
     public function confirm($id) {
-        $lesson = Lesson::findOrFail($id);
+        $lesson = Lesson::find($id);
         return view('lessons.confirm', ['lesson' => $lesson]);
     }
 
     //削除処理
-    public function destroy() {
+    public function destroy($id) {
+        $lesson = Lesson::find($id);
+        $lesson->delete();
+        //teacher_flag_destroy関数呼び出し
+        $this->teacher_flag_update(Auth::user());
 
+        return redirect()->route('users.mypage', ['user' => Auth::user()])
+        ->with('flash_message', '正常にレッスンの削除が完了しました。');
+    }
+
+    //userのteacher_flagを変換
+    // private function teacher_flag_update($user) {
+    //     //もし初めてのLesson作成の際はteacher_flagを1へ変換
+    //     if($user->teacher_flag == 0) {
+    //         $user->teacher_flag = 1;
+    //         $user->fill(['teacher_flag'])->save();
+    //     }
+    //     return;
+    // }
+
+
+    private function teacher_flag_update($user) {
+        //レコードの存在を確認（戻り値はbool）
+       $have_lesson = Lesson::where('user_id', $user->id)->exists();
+       //Lessonに1つでもレコードがあればflagは1、なければ0
+       switch($have_lesson) {
+           case true:
+            $user->teacher_flag = 1;
+           break;
+           case false:
+            $user->teacher_flag = 0;
+           break;
+       }
+       $user->fill(['teacher_flag'])->save();
+       return;
     }
 }
