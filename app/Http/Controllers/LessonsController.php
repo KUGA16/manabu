@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Lesson;
+use Carbon\Carbon;
 use App\OrderDetail;
+use App\Enums\CategoryId;
+use App\Enums\Laddress;
 use CreateUsersTable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,7 +15,9 @@ class LessonsController extends Controller
 {
     //作成画面
     public function create() {
-        return view('lessons.create');
+        $categorys = CategoryId::toSelectArray();
+        $l_addresses = Laddress::toSelectArray();
+        return view('lessons.create', ['categorys' => $categorys, 'l_addresses' => $l_addresses]);
     }
 
     //登録処理
@@ -20,7 +25,7 @@ class LessonsController extends Controller
         $request->validate([
             'title'       => 'required|string|max:255', //入力必須、文字列、255文字以内
             'category_id' => 'required',
-            // 'image'    => 'file|image', //アップロードに成功している、画像ファイル
+            'image'       => 'file|image', //アップロードに成功している、画像ファイル
             'body'        => 'required|string|max:2048',
             'keyword'     => 'max:255',
             'l_address'   => 'required',
@@ -32,10 +37,16 @@ class LessonsController extends Controller
             $lesson = new Lesson();
             $lesson->user_id = Auth::user()->id;
 
+            //下記fillでまとめらる？
             $lesson->title = $request->title;
-            $lesson->image = 'image';
+            //ファイル存在&問題なくアップロードしているか確認
+            $lessonImg = $request->image;
+            if($lessonImg->isValid()) {
+                $filePath = $lessonImg->store('public');
+                $lesson->image = str_replace('public/', '', $filePath);
+            }
             $lesson->keyword = $request->keyword;
-            $lesson->category_id = 1;
+            $lesson->category_id = $request->category_id;
             $lesson->body = $request->body;
             $lesson->l_address = $request->l_address;
             $lesson->m_address = $request->m_address;
@@ -51,7 +62,10 @@ class LessonsController extends Controller
 
     //一覧画面
     public function index() {
-
+         //今日以降＆現在の時間より後のレッスン取得
+        $lessons = Lesson::whereDate('date', '>=', Carbon::today())
+        ->get();
+        return view('lessons.index', ['lessons' => $lessons]);
     }
 
     //詳細画面
@@ -100,6 +114,7 @@ class LessonsController extends Controller
     //削除処理
     public function destroy($id) {
         $lesson = Lesson::find($id);
+        //このlessonに申込み者がいる場合（期限内）は削除できない
         $lesson->delete();
         //teacher_flag_destroy関数呼び出し
         $this->teacher_flag_update(Auth::user());
@@ -108,17 +123,7 @@ class LessonsController extends Controller
         ->with('flash_message', '正常にレッスンの削除が完了しました。');
     }
 
-    //userのteacher_flagを変換
-    // private function teacher_flag_update($user) {
-    //     //もし初めてのLesson作成の際はteacher_flagを1へ変換
-    //     if($user->teacher_flag == 0) {
-    //         $user->teacher_flag = 1;
-    //         $user->fill(['teacher_flag'])->save();
-    //     }
-    //     return;
-    // }
-
-
+    //teacher_flag更新処理
     private function teacher_flag_update($user) {
         //レコードの存在を確認（戻り値はbool）
        $have_lesson = Lesson::where('user_id', $user->id)->exists();
