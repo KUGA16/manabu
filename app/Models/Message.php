@@ -10,4 +10,9 @@ class Message extends Model
     protected $fillable = [
         'sender_id', 'receiver_id', 'body',
     ];
+
+    //リレーション
+    public function user() {
+        return $this->belongsTo('App\Models\User');
+    }
 }

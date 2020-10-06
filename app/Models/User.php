@@ -38,10 +38,14 @@ class User extends Authenticatable
     ];
 
     public function lessons() {
-        return $this->hasMany('App\Lesson');
+        return $this->hasMany('App\Models\Lesson');
     }
 
     public function order_details() {
-        return $this->hasMany('App\OrderDetail');
+        return $this->hasMany('App\Models\OrderDetail');
+    }
+
+    public function messages() {
+        return $this->hasMany('App\Models\Message');
     }
 }
