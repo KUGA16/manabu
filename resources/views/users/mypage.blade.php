@@ -17,6 +17,39 @@
                         {{ csrf_field() }} <!-- 悪意ある投稿から保護する -->
                         <input type="submit" value="編集" class="btn btn-secondary btn-md">
                      </form>
+                @else
+                    <!-- モーダルボタン -->
+                    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#Modal">
+                        メッセージを送る
+                    </button>
+                    <!-- モーダル本体 -->
+                    <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="ModalTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="msg" method="post" action="{{ route('messages.store', [Auth::user()->id]) }}" enctype="multipart/form-data">
+                                        {{ csrf_field() }} <!-- 悪意ある投稿から保護する -->
+                                        <div class="form">
+                                            <div class="form-body">
+                                                {{ Form::hidden('sender_id', Auth::user()->id) }} <!-- 送信者ID（ログインユーザ） -->
+                                                {{ Form::hidden('receiver_id', $user->id) }} <!-- 受信者ID -->
+                                                {{ Form::textarea('body', old('body'), ['size' => '60x10']) }} <!-- メッセージ内容 -->
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>
+                                    <button type="submit" form="msg" class="btn btn-primary">送信</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 @endif
             </div>
 
