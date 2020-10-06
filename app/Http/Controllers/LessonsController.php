@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Lesson;
-use Carbon\Carbon;
-use App\OrderDetail;
+use App\Models\Lesson;
+use App\Models\OrderDetail;
 use App\Enums\CategoryId;
 use App\Enums\Laddress;
+use Carbon\Carbon;
 use CreateUsersTable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

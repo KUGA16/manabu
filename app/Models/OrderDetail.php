@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,6 +11,7 @@ class OrderDetail extends Model
         'user_id', 'lesson_id', 'hold_flag',
     ];
 
+    //リレーション
     public function user() {
         return $this->belongsTo('App\User');
     }
