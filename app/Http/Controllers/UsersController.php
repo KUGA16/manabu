@@ -11,8 +11,9 @@ use Illuminate\Support\Facades\Auth;
 class UsersController extends Controller
 {
 
-  public function mypage($id) {
-    $user = User::find($id);
+  //会員マイページ
+  public function mypage($user_id) {
+    $user = User::find($user_id);
     $lessons = Lesson::where('user_id', $user->id)
         ->orderBy('date', 'desc') //開催日が新しい順に並べる
         ->orderBy('time', 'asc') //開催時時間が古い順に並べる
@@ -23,11 +24,13 @@ class UsersController extends Controller
     return view('users.mypage', ['user' => $user, 'lessons' => $lessons, 'order_details' => $order_details]);
   }
 
-  public function edit($id) {
-    return view('users.edit', ['user' => Auth::user()]);
+  //会員情報編集画面
+  public function edit() {
+    return view('users.edit', ['user' => Auth::user()]); //ログインユーザの画面のみ表示
   }
 
-  public function update(Request $request, $id) {
+  //更新処理
+  public function update(Request $request, $user_id) {
 
     //バリデーション
     $request->validate([
@@ -35,7 +38,7 @@ class UsersController extends Controller
       'email' => 'required|email:rfc',
     ]);
 
-    $user = User::find($id);
+    $user = User::find($user_id);
     $new_date = $request->all();
     unset($request->all()['_token']);
     $user->fill($new_date)->save();
