@@ -69,21 +69,21 @@ class LessonsController extends Controller
     }
 
     //詳細画面
-    public function show($id) {
-        $lesson = Lesson::find($id);
+    public function show($lesson_id) {
+        $lesson = Lesson::find($lesson_id);
         //$lessonを契約済か判断（order_details内にレコードがあればture:契約済、なければfalse:未契約）
         $have_lesson = OrderDetail::where('user_id', Auth::user()->id)->where('lesson_id', $lesson->id)->exists();
         return view('lessons.show', ['lesson' => $lesson, 'have_lesson' => $have_lesson]);
     }
 
     //編集画面
-    public function edit($id) {
-        $lesson = Lesson::find($id);
+    public function edit($lesson_id) {
+        $lesson = Lesson::find($lesson_id);
         return view('lessons.edit', ['lesson' => $lesson]);
     }
 
     //更新処理
-    public function update(Request $request, $id) {
+    public function update(Request $request, $lesson_id) {
         //バリデーション
         $request->validate([
             'title'       => 'required|string|max:255', //入力必須、文字列、255文字以内
@@ -97,23 +97,23 @@ class LessonsController extends Controller
             'time'        => 'required',
         ]);
 
-        $lesson = Lesson::find($id);
+        $lesson = Lesson::find($lesson_id);
         $new_date = $request->all();
         unset($request->all()['_token']); //トークン削除
         $lesson->fill($new_date)->save();
-        return redirect()->route('lessons.show', ['lesson' => $id])
+        return redirect()->route('lessons.show', ['lesson' => $lesson_id])
         ->with('flash_message', '正常にレッスンの編集が完了しました。');
     }
 
     //契約確認画面
-    public function confirm($id) {
-        $lesson = Lesson::find($id);
+    public function confirm($lesson_id) {
+        $lesson = Lesson::find($lesson_id);
         return view('lessons.confirm', ['lesson' => $lesson]);
     }
 
     //削除処理
-    public function destroy($id) {
-        $lesson = Lesson::find($id);
+    public function destroy($lesson_id) {
+        $lesson = Lesson::find($lesson_id);
         //このlessonに申込み者がいる場合（期限内）は削除できない
         $lesson->delete();
         //teacher_flag_destroy関数呼び出し
