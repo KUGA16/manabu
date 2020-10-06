@@ -8,6 +8,6 @@ class Message extends Model
 {
     //カラムにデータの挿入を許可する
     protected $fillable = [
-        'sender_id', 'receiver_id', 'content',
+        'sender_id', 'receiver_id', 'body',
     ];
 }
