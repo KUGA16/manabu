@@ -32,7 +32,7 @@ Route::group(['prefix' => 'users/{user}'], function() {
   //OrderDetails
   Route::resource('order_details', 'OrderDetailsController', ['only' => ['store', 'destroy']]);
   //Rooms
-  Route::resource('rooms', 'MessagesController', ['only' => ['index', 'show']]);
+  Route::resource('rooms', 'RoomsController', ['only' => ['index', 'show']]);
 });
 
 Route::group(['prefix' => 'users/{user}/rooms/{room}'], function() {
