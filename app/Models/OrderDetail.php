@@ -13,10 +13,10 @@ class OrderDetail extends Model
 
     //リレーション
     public function user() {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo('App\Models\User');
     }
 
     public function lesson() {
-        return $this->belongsTo('App\Lesson');
+        return $this->belongsTo('App\Models\Lesson');
     }
 }
