@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,7 +28,14 @@ Route::resource('users', 'UsersController', ['only' => ['edit', 'update']]);
 Route::resource('lessons', 'LessonsController');
 Route::get('lessons/{lesson}/confirm', 'LessonsController@confirm')->name('lessons.confirm');
 
-//OrderDetails
 Route::group(['prefix' => 'users/{user}'], function() {
+  //OrderDetails
   Route::resource('order_details', 'OrderDetailsController', ['only' => ['store', 'destroy']]);
+  //Rooms
+  Route::resource('rooms', 'MessagesController', ['only' => ['index', 'show']]);
+});
+
+Route::group(['prefix' => 'users/{user}/rooms/{room}'], function() {
+  //Messages
+  Route::resource('messages', 'MessagesController', ['only' => ['store', 'edit', 'update', 'destroy']]);
 });
