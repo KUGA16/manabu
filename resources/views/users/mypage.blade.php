@@ -32,12 +32,12 @@
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <form id="msg" method="post" action="{{ route('messages.store', [Auth::user()->id]) }}" enctype="multipart/form-data">
+                                    <form id="msg" method="post" action="{{ route('rooms.store', [Auth::user()->id]) }}" enctype="multipart/form-data">
                                         {{ csrf_field() }} <!-- 悪意ある投稿から保護する -->
                                         <div class="form">
                                             <div class="form-body">
-                                                {{ Form::hidden('sender_id', Auth::user()->id) }} <!-- 送信者ID（ログインユーザ） -->
-                                                {{ Form::hidden('receiver_id', $user->id) }} <!-- 受信者ID -->
+                                                {{ Form::hidden('user_id', Auth::user()->id) }} <!-- ログインユーザID -->
+                                                {{ Form::hidden('receiver_id', $user->id) }}
                                                 {{ Form::textarea('body', old('body'), ['size' => '60x10']) }} <!-- メッセージ内容 -->
                                             </div>
                                         </div>
